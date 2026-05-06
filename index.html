@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galeria de Momentos</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #ffeef4 0%, #e6f7ff 100%);
+      min-height: 100vh;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #9c27b0 0%, #6a1b9a 20%, #512da8 40%, #1976d2 60%, #0288d1 80%, #e91e63 100%);
+      color: white;
+      padding: 1.2rem 0;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+
+    nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo { font-size: 1.8rem; font-weight: bold; letter-spacing: 2px; }
+
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 10px 5px; }
+    .hamburger span { display: block; width: 30px; height: 4px; background: white; margin: 6px 0; border-radius: 4px; transition: 0.3s; }
+    .hamburger.active span:nth-child(1) { transform: translateY(10px) rotate(45deg); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: translateY(-10px) rotate(-45deg); }
+
+    .menu-links { display: flex; gap: 35px; }
+    .menu-links a { color: white; text-decoration: none; font-weight: 500; font-size: 1.1rem; }
+    .menu-links a:hover { color: #ff9e9e; }
+
+    main { margin-top: 100px; padding: 40px 15px; max-width: 1300px; margin-left: auto; margin-right: auto; }
+
+    h1 { text-align: center; margin-bottom: 60px; font-size: 2.7rem; color: #444; }
+    h2 { text-align: center; margin: 80px 0 40px; font-size: 2.3rem; color: #555; }
+
+    .galeria {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 80px;
+    }
+
+    .item {
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: all 0.4s ease;
+    }
+    .item:hover { transform: translateY(-15px); box-shadow: 0 25px 50px rgba(0,0,0,0.18); }
+
+    .item img, .video-card img { width: 100%; height: 280px; object-fit: cover; }
+    .legenda { padding: 18px; text-align: center; font-weight: 600; color: #444; }
+
+    .video-card { position: relative; cursor: pointer; }
+    .video-card img { border-radius: 18px 18px 0 0; transition: transform 0.4s; }
+    .video-card:hover img { transform: scale(1.07); }
+
+    .overlay-btn {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+    .video-card:hover .overlay-btn { opacity: 1; }
+
+    .btn-assistir {
+      background: #ff6b9d;
+      color: white;
+      font-weight: 600;
+      font-size: 1.3rem;
+      padding: 15px 35px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 8px 30px rgba(255,107,157,0.5);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-assistir::before { content: "Play"; font-size: 1.5rem; }
+    .btn-assistir:hover { background: #ff4d8d; transform: translateY(-5px); }
+
+    /* BOTÃO VERMELHO NO FINAL DO SITE – ESTILO DA VERSÃO QUE VOCÊ GOSTOU */
+    .aviso-final {
+      background: linear-gradient(135deg, #c62828, #f44336, #d32f2f);
+      color: white;
+      text-align: center;
+      padding: 20px 40px;
+      margin: 100px auto 60px;
+      max-width: 90%;
+      border-radius: 50px;
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      box-shadow: 0 12px 40px rgba(244, 67, 54, 0.7);
+      animation: pulse 2.5s infinite;
+      user-select: none;
+    }
+
+    @keyframes pulse {
+      0%   { transform: scale(1); box-shadow: 0 12px 40px rgba(244,67,54,0.7); }
+      50%  { transform: scale(1.05); box-shadow: 0 20px 60px rgba(244,67,54,1); }
+      100% { transform: scale(1); box-shadow: 0 12px 40px rgba(244,67,54,0.7); }
+    }
+
+    footer {
+      background: #0a0a0a;
+      color: #ffb6c1;
+      padding: 90px 20px 60px;
+      text-align: center;
+      font-size: 1rem;
+      letter-spacing: 1.5px;
+    }
+
+    /* RESPONSIVO */
+    @media (max-width: 768px) {
+      .hamburger { display: block; }
+      .menu-links {
+        position: fixed; top: 76px; left: -100%; width: 100%; height: 100vh;
+        background: linear-gradient(135deg, #ffb6d1 0%, #b6e3ff 100%);
+        flex-direction: column; align-items: center; padding-top: 100px; transition: left 0.4s; z-index: 999;
+      }
+      .menu-links.active { left: 0; }
+      .menu-links a { font-size: 2rem; margin: 25px 0; color: #333; font-weight: 600; }
+
+      .aviso-final {
+        font-size: 1.5rem;
+        padding: 18px 30px;
+        margin: 80px auto 50px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .aviso-final {
+        font-size: 1.3rem;
+        padding: 16px 25px;
+        letter-spacing: 1.8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <div class="logo">GALERIA DE MOMENTOS</div>
+      <button class="hamburger" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="menu-links" id="menuLinks">
+        <a href="#videos">Vídeos</a>
+        <a href="#feiras">Feiras</a>
+        <a href="#pinturas">Pinturas</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Reveja alguns registros de atividades e trabalhos:</h1>
+
+    <!-- VÍDEOS -->
+    <section id="videos">
+      <h2>Vídeos</h2>
+      <div class="galeria">
+        <div class="item video-card">
+          <img src="10.png" alt="Dia dos Professores">
+          <div class="overlay-btn">
+            <a href="https://www.canva.com/design/DAG1aOH0TI8/qr5kmd3iMIQt47kq9xhT0Q/watch" target="_blank" class="btn-assistir">Assistir Vídeo</a>
+          </div>
+          <div class="legenda">Dia dos Professores – 2025</div>
+        </div>
+        <div class="item video-card">
+          <img src="11.png" alt="SAEB">
+          <div class="overlay-btn">
+            <a href="https://www.canva.com/design/DAGyCPJnHlg/mSlFZIbLbsYECY6zZNOJfQ/watch" target="_blank" class="btn-assistir">Assistir Vídeo</a>
+          </div>
+          <div class="legenda">Vídeo SAEB</div>
+        </div>
+        <div class="item video-card">
+          <img src="12.png" alt="Química">
+          <div class="overlay-btn">
+            <a href="https://www.canva.com/design/DAGvIvZ5hD8/HRk-L9bI_wuag2OzQAAqhQ/watch" target="_blank" class="btn-assistir">Assistir Vídeo</a>
+          </div>
+          <div class="legenda">Trabalho de Química I</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEIRAS -->
+    <section id="feiras">
+      <h2>Feiras</h2>
+      <div class="galeria">
+        <div class="item"><img src="b.jpg" alt=""><div class="legenda">Feira de Ciências 2024</div></div>
+        <div class="item"><img src="fe3.jpg" alt=""><div class="legenda">Feira de Ciências 2025</div></div>
+        <div class="item"><img src="1.5.jpg" alt=""><div class="legenda">Feira de Ciências 2025</div></div>
+        <div class="item"><img src="d.jpg" alt=""><div class="legenda">Feira de Ciências 2025</div></div>
+        <div class="item"><img src="fe.jpg" alt=""><div class="legenda">Empreendedorismo – 2024</div></div>
+        <div class="item"><img src="a.jpg" alt=""><div class="legenda">Empreendedorismo – 2024</div></div>
+      </div>
+    </section>
+
+    <!-- PINTURAS -->
+    <section id="pinturas">
+      <h2>Pinturas</h2>
+      <div class="galeria">
+        <div class="item"><img src="1.jpg" alt=""><div class="legenda">Pintura em tela – 2024</div></div>
+        <div class="item"><img src="1.0.jpg" alt=""><div class="legenda">Pintura em tela – 2024</div></div>
+        <div class="item"><img src="3.jpg" alt=""><div class="legenda">Pintura no muro – projeto FENAAH/S</div></div>
+        <div class="item"><img src="4.jpg" alt=""><div class="legenda">Pintura no muro – projeto FENAAH/S</div></div>
+        <div class="item"><img src="5.jpg" alt=""><div class="legenda">Concurso de Desenho – 2025</div></div>
+        <div class="item"><img src="6.jpg" alt=""><div class="legenda">Concurso de Desenho – 2025</div></div>
+      </div>
+    </section>
+
+    <!-- BOTÃO VERMELHO NO FINAL DO SITE -->
+    <div class="aviso-final">
+     <pre> AVISO: VOCÊ FOI AVISADO
+▶ •၊၊||၊|။||||။‌‌‌‌‌၊|• 3:12</pre>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>© 2025 – Adriane, Giovana e Renata</p>
+    <style>/* BOTÃO VERMELHO NO FINAL DO SITE – VERSÃO MAIS DISCRETA E BONITA */
+.aviso-final {
+  background: linear-gradient(135deg, #c62828, #f44336, #d32f2f);
+  color: white;
+  text-align: center;
+  padding: 18px 40px;
+  margin: 90px auto 60px;
+  max-width: 90%;
+  border-radius: 50px;
+  font-size: 1.4rem;          /* ← Tamanho reduzido (era 1.8rem) */
+  font-weight: 800;
+  letter-spacing: 1.8px;      /* ← Espaçamento das letras reduzido */
+  text-transform: uppercase;
+  box-shadow: 0 12px 40px rgba(244, 67, 54, 0.7);
+  animation: pulse 2.5s infinite;
+  user-select: none;
+  line-height: 1.4;
+}
+
+.aviso-final pre {
+  margin: 0;
+  font-family: inherit;
+  font-size: 1rem;            /* ← Tamanho do “código de música” também reduzido */
+}
+
+/* Responsivo – fica ainda menor em telas pequenas */
+@media (max-width: 768px) {
+  .aviso-final {
+    font-size: 1.25rem;
+    padding: 16px 30px;
+    letter-spacing: 1.5px;
+  }
+  .aviso-final pre { font-size: 0.9rem; }
+}
+
+@media (max-width: 480px) {
+  .aviso-final {
+    font-size: 1.1rem;
+    padding: 14px 25px;
+    letter-spacing: 1.2px;
+  }
+  .aviso-final pre { font-size: 0.85rem; }
+}</style>
+  </footer>
+
+  <script>
+    const hamburger = document.querySelector('.hamburger');
+    const menuLinks = document.querySelector('#menuLinks');
+
+    hamburger.addEventListener('click', () => {
+      menuLinks.classList.toggle('active');
+      hamburger.classList.toggle('active');
+    });
+
+    document.querySelectorAll('.menu-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuLinks.classList.remove('active');
+        hamburger.classList.remove('active');
+      });
+    });
+  </script>
+</body>
+</html>
